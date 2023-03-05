@@ -1,19 +1,22 @@
 {% extends 'base.html' %}
 
-{% block page %}
-    BrightBlog - Edit an Existing Blog Post
-{% endblock %}
+    {% block page %}
+        BrightBlog - Edit an Existing Blog Post
+    {% endblock %}
 
-{% block content %}
+    {% block content %}
+      {% if user.is_authenticated %}
+        <h1>Edit Post:</h1>
 
-<h1>Edit Post:</h1>
+        <div class="mb-3">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-secondary">Save</button>
+            </form>
+        </div>
+      {% else %}
+        <h1>Unauthorized: you don't have the permission to edit posts!</h1>
+      {% endif %}
 
-<div class="mb-3">
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-secondary">Save</button>
-    </form>
-</div>
-
-{% endblock %}
+    {% endblock %}

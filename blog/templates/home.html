@@ -2,15 +2,42 @@
 
 {% block content %}
 
-<h1>Posts</h1>
+<div class="mx-auto" style="width: 220px;">
+    <h1>Blog Posts</h1>
+</div>
+<hr class="border border-danger border-2 opacity-50">
 
-<ul>
-{% for post in object_list %}
-    <li><a href="{% url 'article' post.pk %}">{{ post.title }}</a> - {{ post.author.first_name }} {{ post.author.last_name }}
-        <small> <a href="{% url 'edit_post' post.pk %}">(Edit)</a> </small>
-        <small> <a href="{% url 'delete_post' post.pk %}">(Delete)</a> </small> <br/>
-        {{ post.content }} </li>
-{% endfor %}
-</ul>
+{# taken from Bootstrap documentation: https://getbootstrap.com/docs/5.0/getting-started/introduction/#}
+<div class="mx-auto" style="width: 800px;">
+    {% for post in object_list %}
+        <a style="text-decoration:none;" href="{% url 'article' post.pk %}" class="link-dark">
+            <div class="card text-center w-800 bg-light mb-3">
+              <div class="card-body">
+                <h5 class="card-title"><u>{{ post.title }}</u></h5>
+                <hr>
+                  <p class="card-text">
+                    {{ post.content }}
+                    <br/> <br/>
+                    <footer class="blockquote-footer">
+                        {{ post.author.first_name }} {{ post.author.last_name }}, {{ post.pub_date }}
+                    </footer>
+                    {% if user.is_authenticated%}
+                        <div class="btn-group">
+                            <strong><small>
+                                <a href="{% url 'edit_post' post.pk %}" class="card-link btn btn-secondary btn btn-sm">
+                                    Edit
+                                </a>
+                                <a href="{% url 'delete_post' post.pk %}" class="card-link btn btn-danger btn btn-sm">
+                                    Delete
+                                </a>
+                            </small></strong>
+                        </div>
+                    {% endif %}
+                  </p>
+              </div>
+            </div>
+        </a>
+    {% endfor %}
+</div>
 
 {% endblock %}

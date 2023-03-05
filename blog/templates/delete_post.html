@@ -5,17 +5,20 @@
 {% endblock %}
 
 {% block content %}
+  {% if user.is_authenticated %}
+    <h1>Delete "{{ post.title }}" forever?</h1>
+    <br/>
 
-<h1>Delete "{{ post.title }}"?</h1>
-<br/>
-<br/>
-
-<div class="mb-3">
-    <form method="POST">
-        {% csrf_token %}
-        <strong>Deleted posts cannot be recovered</strong> <br/> <br/>
-        <button class="btn btn-secondary">Delete</button>
-    </form>
-</div>
+    <div class="mb-3">
+        <form method="POST">
+            {% csrf_token %}
+            <em><strong>Deleted posts cannot be recovered</strong></em> <br/> <br/>
+            <button class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+    <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+  {% else %}
+    <h1>Unauthorized: you don't have the permission to delete posts!</h1>
+  {% endif %}
 
 {% endblock %}

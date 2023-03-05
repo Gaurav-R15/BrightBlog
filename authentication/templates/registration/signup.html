@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block page %}
+    Sign Up
+{% endblock %}
+
+{% block content %}
+
+<h1>Register for an Account:</h1>
+<br/>
+
+{% load socialaccount %}
+<div class="mb-3">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br/>
+        <button class="btn btn-secondary">Register</button>
+    </form>
+    OR continue with:
+    <a href="{% provider_login_url 'google' process='login' %}" class="bi bi-google btn btn-lg" style="background-color: #dd4b39;">
+    </a>
+    <br/> <br/>
+    Already have an account? Login <a href="{% url 'login' %}">here</a>!
+</div>
+
+{% endblock %}
