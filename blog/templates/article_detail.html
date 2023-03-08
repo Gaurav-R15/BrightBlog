@@ -11,6 +11,7 @@
     <small>
         Written by {{ post.author.first_name }} {{ post.author.last_name }} - <em>{{ post.pub_date }}
     </em></small>
+    &nbsp;
     {% if user.is_authenticated%}
         {% if user.id == post.author.id %}
             <strong><small>
@@ -25,15 +26,14 @@
     {% endif %}
     <br/>
     <hr>
-    <div class="mx-auto" style="width: 800px;">
+    <center>
         {% if post.image %}
             <img src="{{ post.image.url }}">
             <br/>
             <br/>
         {% endif %}
-    </div>
+    </center>
     {{ post.content|safe }}
-    <br/>
     <br/>
     <br/>
     <a href="{% url 'home' %}" class="btn btn-secondary">Back To Home</a>

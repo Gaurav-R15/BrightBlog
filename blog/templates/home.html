@@ -20,7 +20,7 @@
                 <h5 class="card-title"><u>{{ post.title }}</u></h5>
                 <hr>
                   <p class="card-text">
-                    {{ post.content|safe|slice:"0:255" }}... <strong>read more</strong>
+                    {{ post.content|safe|slice:"0:255" }}... <em>read more</em>
                     <br/><br>
                     <footer class="blockquote-footer">
                         {{ post.author.first_name }} {{ post.author.last_name }}, {{ post.pub_date }}
