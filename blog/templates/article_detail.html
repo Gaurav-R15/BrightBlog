@@ -1,55 +1,110 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block page %}
     BrightBlog - {{ post.title }}
 {% endblock %}
 
 {% block content %}
-
-<h1> {{ post.title }} </h1>
-<small>Written by {{ post.author.first_name }} {{ post.author.last_name }} - <em>{{ post.pub_date }}</em>
-    {% if user.is_authenticated%} &nbsp;
-        <strong><small>
-            <a href="{% url 'edit_post' post.pk %}" class="card-link btn btn-secondary btn btn-sm">
-                Edit
-            </a>
-            <a href="{% url 'delete_post' post.pk %}" class="card-link btn btn-danger btn btn-sm">
-                Delete
-            </a>
-        </small></strong>
+    <h1> {{ post.title }} </h1>
+    <small>
+        Written by {{ post.author.first_name }} {{ post.author.last_name }} - <em>{{ post.pub_date }}
+    </em></small>
+    {% if user.is_authenticated%}
+        {% if user.id == post.author.id %}
+            <strong><small>
+                <a href="{% url 'edit_post' post.pk %}" class="card-link btn btn-secondary btn btn-sm">
+                    Edit
+                </a>
+                <a href="{% url 'delete_post' post.pk %}" class="card-link btn btn-danger btn btn-sm">
+                    Delete
+                </a>
+            </small></strong>
+        {% endif %}
     {% endif %}
-<br/>
-<hr>
-{{ post.content|safe }}
-<br/>
-<br/>
-<br/>
-<a href="{% url 'home' %}" class="btn btn-secondary">Back To Home</a>
-<br/>
-<br/>
-
-<hr class="border border-dark border-3 opacity-75">
-
-{% if user.is_authenticated %}
-    {% if not post.comments.all %}
-        <h1>Comment Section</h1>
-        <hr>
-        <strong>No Comments Yet: </strong> <a href="#" class="btn btn-secondary btn-sm">Be The First</a>
-    {% else %}
-        <h1>Comment Section</h1>
-        <hr>
-        <a href="#" class="btn btn-secondary">Add A Comment</a>
-        <br/> <br/>
-        {% for comment in post.comments.all %}
-            <strong>{{ comment.author }}</strong> - <em>{{ comment.date }} </em>
+    <br/>
+    <hr>
+    <div class="mx-auto" style="width: 800px;">
+        {% if post.image %}
+            <img src="{{ post.image.url }}">
             <br/>
-            {{  comment.body }}
-            <br/> <hr>
-        {% endfor %}
-    {% endif %}
-{% else %}
-    <strong>Login to view and post comments!</strong>
-{% endif %}
+            <br/>
+        {% endif %}
+    </div>
+    {{ post.content|safe }}
+    <br/>
+    <br/>
+    <br/>
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back To Home</a>
+    <br/>
+    <br/>
 
+    <hr class="border border-dark border-3 opacity-75">
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content"></div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        {% if not post.comments.all %}
+            <h1>Comment Section</h1>
+            <hr>
+            <strong>No Comments Yet... <em>Start the Conversation:</em></strong>
+        {% else %}
+            <h1>Comment Section</h1>
+            <hr>
+        {% endif %}
+        <button id="new-comment" class="btn btn-secondary btn btn-sm" type="button" name="button">Add Comment</button>
+        <br/> <br/>
+        {% if post.comments.all %}
+            {% for comment in post.comments.all %}
+                <strong>{{ comment.author.username}}</strong> - <em> {{ comment.date }} </em>
+                <br/>
+                {{  comment.body }}
+                <br/>
+                <form action="{% url 'like_comment' comment.pk %}" method="POST" class='like-form' id='{{comment.id}}'>
+                    {% csrf_token %}
+                        <input type="hidden" name="comment_id" value={{comment.id}}>
+                        <button type="submit" class="bi bi-hand-thumbs-up btn btn-md">
+                        </button> -
+                    <span class="g-color-gray-dark-v5 g-font-size-15 like-count{{comment.id}}">{{ comment.likes.count }}</span>
+                </form>
+                <hr>
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        <strong>Login to view and post comments!</strong>
+    {% endif %}
+
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', (e) => {
+            modalForm(document.getElementById('new-comment'), {
+                formURL: "{% url 'new_comment' post.pk %}"
+            })
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            # asyncSettings.addModalFormFunction
+            function addCommentModalForm() {
+              $(".new-comment").each(function () {
+                $(this).modalForm({
+                  formURL: "{% url 'new_comment' post.pk %}",
+                  asyncUpdate: true,
+                  asyncSettings: {
+                    closeOnSubmit: false,
+                    addModalFormFunction: addCommentModalForm
+                  }
+                });
+              });
+            }
+            addCommentModalForm();
+        });
+    </script>
 
 {% endblock %}
